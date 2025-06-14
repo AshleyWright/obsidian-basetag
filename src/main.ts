@@ -90,11 +90,14 @@ class editorPlugin implements PluginValue {
 							}
 						}
 
-						const text = view.state.sliceDoc(node.from, node.to);
+						// Step backwards to find the start of the tag.
+						let { from } = node;
+						while (view.state.sliceDoc(from - 1, from) !== "#") from--;
+						const text = view.state.sliceDoc(from, node.to);
 
 						builder.add(
 							// To include the "#".
-							node.from - 1,
+							from - 1,
 							node.to,
 							Decoration.replace({
 								widget: new TagWidget(text, false),
